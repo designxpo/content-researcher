@@ -3,11 +3,11 @@ import OpenAI from "openai";
 import { prisma } from "../prisma";
 
 const apifyClient = new ApifyClient({
-  token: process.env.APIFY_API_TOKEN,
+  token: process.env.APIFY_API_TOKEN || "",
 });
 
 const openaiClient = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY || "placeholder",
 });
 
 // Platform-specific Apify actor IDs
