@@ -1,0 +1,192 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model ScrapeJob {
+  id          String   @id @default(uuid())
+  platform    String   // instagram | youtube | twitter
+  query       String
+  status      String   @default("pending") // pending | running | completed | failed
+  postsFound  Int      @default(0)
+  error       String?
+  startedAt   DateTime @default(now())
+  completedAt DateTime?
+  posts       ScrapedPost[]
+}
+
+model ScrapedPost {
+  id             String   @id @default(uuid())
+  scrapeJobId    String
+  scrapeJob      ScrapeJob @relation(fields: [scrapeJobId], references: [id])
+  platform       String
+  url            String
+  hookText       String?
+  caption        String?
+  views          Int      @default(0)
+  likes          Int      @default(0)
+  comments       Int      @default(0)
+  engagementRate Float    @default(0)
+  postDate       DateTime?
+  transcript     String?
+  thumbnailUrl   String?
+  authorName     String?
+  authorHandle   String?
+  rawData        String?  // JSON blob of full raw response
+  createdAt      DateTime @default(now())
+  validatedTopics ValidatedTopicPost[]
+}
+
+model ValidatedTopic {
+  id            String   @id @default(uuid())
+  scrapeJobId   String?
+  topicName     String
+  description   String?
+  score         Float    @default(0)
+  viewsWeight   Float    @default(0.40)
+  erWeight      Float    @default(0.35)
+  commentWeight Float    @default(0.25)
+  cluster       String?
+  postCount     Int      @default(0)
+  avgViews      Float    @default(0)
+  avgER         Float    @default(0)
+  avgComments   Float    @default(0)
+  status        String   @default("pending") // pending | script_generated | approved
+  createdAt     DateTime @default(now())
+  posts         ValidatedTopicPost[]
+  scripts       GeneratedScript[]
+}
+
+model ValidatedTopicPost {
+  id        String   @id @default(uuid())
+  topicId   String
+  postId    String
+  topic     ValidatedTopic @relation(fields: [topicId], references: [id])
+  post      ScrapedPost    @relation(fields: [postId], references: [id])
+}
+
+model VoiceProfile {
+  id             String   @id @default(uuid())
+  name           String   @default("Default")
+  sampleScripts  String   // JSON array of script texts
+  vocabulary     String?  // JSON analysis
+  sentenceLength String   @default("medium") // short | medium | long
+  energy         Int      @default(5) // 1-10
+  formality      String   @default("casual") // casual | balanced | professional
+  humor          Int      @default(3) // 1-10
+  ctas           String?  // JSON array of common CTAs
+  analysisResult String?  // JSON from Claude analysis
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  scripts        GeneratedScript[]
+}
+
+model GeneratedScript {
+  id             String   @id @default(uuid())
+  topicId        String
+  voiceProfileId String
+  topic          ValidatedTopic @relation(fields: [topicId], references: [id])
+  voiceProfile   VoiceProfile   @relation(fields: [voiceProfileId], references: [id])
+  body           String
+  selectedHookId String?
+  status         String   @default("draft") // draft | approved | posted
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  hooks          GeneratedHook[]
+  performance    PerformanceLog?
+}
+
+model GeneratedHook {
+  id        String   @id @default(uuid())
+  scriptId  String
+  script    GeneratedScript @relation(fields: [scriptId], references: [id])
+  hookText  String
+  framework String   // aspirational | pain_point | exclusivity | curiosity | contrarian
+  selected  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model PerformanceLog {
+  id             String   @id @default(uuid())
+  scriptId       String   @unique
+  script         GeneratedScript @relation(fields: [scriptId], references: [id])
+  actualViews    Int      @default(0)
+  actualER       Float    @default(0)
+  actualComments Int      @default(0)
+  actualLikes    Int      @default(0)
+  postedAt       DateTime?
+  platform       String?
+  postUrl        String?
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// Phase 2: Campaign Generator
+model CampaignCreative {
+  id             String   @id @default(uuid())
+  topicId        String
+  scriptId       String?
+  platform       String   // meta | google
+  adType         String   // feed | story | reel | search | display
+  headline       String
+  primaryText    String
+  description    String?
+  callToAction   String
+  targetAudience String?  // JSON
+  landingPageUrl String?
+  status         String   @default("draft") // draft | approved | exported
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// Phase 2: Scoring Weight History (ML feedback loop)
+model ScoringWeightHistory {
+  id             String   @id @default(uuid())
+  viewsWeight    Float
+  erWeight       Float
+  commentWeight  Float
+  sampleSize     Int      @default(0)
+  avgAccuracy    Float    @default(0) // how well these weights predicted performance
+  isActive       Boolean  @default(false)
+  notes          String?
+  createdAt      DateTime @default(now())
+}
+
+// Phase 3: Scheduled Pipeline Runs
+model PipelineSchedule {
+  id          String   @id @default(uuid())
+  name        String
+  platform    String
+  query       String
+  cronExpr    String   // cron expression e.g. "0 9 * * *"
+  isActive    Boolean  @default(true)
+  lastRunAt   DateTime?
+  nextRunAt   DateTime?
+  runCount    Int      @default(0)
+  autoScript  Boolean  @default(false) // auto-generate scripts after validation
+  autoHooks   Boolean  @default(false) // auto-generate hooks after script
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Phase 3: Video Analysis (Gemini Multimodal)
+model VideoAnalysis {
+  id             String   @id @default(uuid())
+  postId         String
+  videoUrl       String?
+  visualHooks    String?  // JSON array of detected visual hooks
+  pacing         String?  // JSON pacing analysis
+  textOnScreen   String?  // detected text overlays
+  transitions    String?  // JSON array of transition types
+  bRollStyle     String?
+  colorPalette   String?  // JSON detected colors
+  thumbnailNotes String?
+  overallScore   Float    @default(0)
+  rawAnalysis    String?  // full Gemini response
+  createdAt      DateTime @default(now())
+}
