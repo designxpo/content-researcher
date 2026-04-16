@@ -30,9 +30,9 @@ export async function runCampaignGenerator(input: CampaignInput) {
     const script = await prisma.generatedScript.findUnique({
       where: { id: scriptId },
       include: { hooks: true },
-    });
+    }) as { body: string; hooks: { selected: boolean; hookText: string }[] } | null;
     if (script) {
-      const selectedHook = script.hooks.find((h: { selected: boolean; hookText: string }) => h.selected);
+      const selectedHook = script.hooks.find((h) => h.selected);
       scriptBody = selectedHook
         ? `${selectedHook.hookText}\n\n${script.body}`
         : script.body;
