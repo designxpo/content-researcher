@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc -l /Users/scaletrix/Documents/ContentResercher/src/components/pages/*.tsx)",
+      "Bash(wc -l /Users/scaletrix/Documents/ContentResercher/src/lib/agents/*.ts)",
+      "Bash(wc -l /Users/scaletrix/Documents/ContentResercher/src/app/api/*/*.ts)",
+      "Bash(ls -la /Users/scaletrix/Documents/ContentResercher/src/app/api/*/)",
+      "Bash(npx eslint *)"
+    ]
+  }
+}

@@ -137,7 +137,7 @@ function generateVisualDirections(hooks: VisualHook[], pacing: PacingAnalysis): 
   directions.push(`🎬 PACING: ${pacing.tempo.toUpperCase()} tempo — aim for ${pacing.avgCutDuration}s average cuts`);
   directions.push(`📈 ENERGY: ${pacing.energyCurve}`);
 
-  for (const hook of hooks.filter((h: any) => h.impact === "high")) {
+  for (const hook of hooks.filter((h: { impact: string; type: string }) => h.impact === "high")) {
     switch (hook.type) {
       case "text_overlay":
         directions.push("📝 OPEN: Show your hook as bold text overlay in the first 2 seconds");

@@ -368,7 +368,7 @@ export default function SettingsPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {history.map((h: any) => (
+                      {history.map((h) => (
                         <tr key={h.id}>
                           <td>{new Date(h.createdAt).toLocaleDateString()}</td>
                           <td style={{ fontFamily: "'JetBrains Mono', monospace" }}>{(h.viewsWeight * 100).toFixed(0)}%</td>
