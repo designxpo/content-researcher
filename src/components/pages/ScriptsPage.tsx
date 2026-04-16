@@ -70,7 +70,7 @@ export default function ScriptsPage() {
     if (!selectedScript) return;
     setSelectedScript({
       ...selectedScript,
-      hooks: selectedScript.hooks.map((h) => ({
+      hooks: selectedScript.hooks.map((h: any) => ({
         ...h,
         selected: h.id === hookId,
       })),
@@ -79,7 +79,7 @@ export default function ScriptsPage() {
 
   async function copyFullScript() {
     if (!selectedScript) return;
-    const selectedHook = selectedScript.hooks.find((h) => h.selected);
+    const selectedHook = selectedScript.hooks.find((h: any) => h.selected);
     const fullScript = selectedHook
       ? `${selectedHook.hookText}\n\n${editedBody}`
       : editedBody;
@@ -203,7 +203,7 @@ export default function ScriptsPage() {
                   </div>
 
                   {/* Selected hook preview */}
-                  {selectedScript.hooks.some((h) => h.selected) && (
+                  {selectedScript.hooks.some((h: any) => h.selected) && (
                     <div
                       style={{
                         background: "var(--accent-purple-dim)",
@@ -231,7 +231,7 @@ export default function ScriptsPage() {
                           lineHeight: 1.4,
                         }}
                       >
-                        {selectedScript.hooks.find((h) => h.selected)?.hookText}
+                        {selectedScript.hooks.find((h: any) => h.selected)?.hookText}
                       </p>
                     </div>
                   )}

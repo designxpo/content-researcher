@@ -118,7 +118,7 @@ Respond in this exact JSON format:
 
     return {
       scriptId,
-      hooks: createdHooks.map((h) => ({
+      hooks: createdHooks.map((h: any) => ({
         id: h.id,
         hookText: h.hookText,
         framework: h.framework,
@@ -181,7 +181,7 @@ export async function runMockHookGenerator(scriptId: string) {
 
   return {
     scriptId,
-    hooks: createdHooks.map((h) => ({
+    hooks: createdHooks.map((h: any) => ({
       id: h.id,
       hookText: h.hookText,
       framework: h.framework,
