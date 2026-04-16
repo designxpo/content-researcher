@@ -5,7 +5,11 @@
       "Bash(wc -l /Users/scaletrix/Documents/ContentResercher/src/lib/agents/*.ts)",
       "Bash(wc -l /Users/scaletrix/Documents/ContentResercher/src/app/api/*/*.ts)",
       "Bash(ls -la /Users/scaletrix/Documents/ContentResercher/src/app/api/*/)",
-      "Bash(npx eslint *)"
+      "Bash(npx eslint *)",
+      "Bash(git -C /Users/scaletrix/Documents/ContentResercher log --oneline -5)",
+      "Bash(git -C /Users/scaletrix/Documents/ContentResercher status -sb)",
+      "Bash(git -C /Users/scaletrix/Documents/ContentResercher log --oneline origin/main..HEAD)",
+      "Bash(git -C /Users/scaletrix/Documents/ContentResercher log --oneline origin/main -3)"
     ]
   }
 }
