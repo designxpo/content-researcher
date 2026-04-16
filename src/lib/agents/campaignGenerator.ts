@@ -32,7 +32,7 @@ export async function runCampaignGenerator(input: CampaignInput) {
       include: { hooks: true },
     });
     if (script) {
-      const selectedHook = script.hooks.find((h) => h.selected);
+      const selectedHook = script.hooks.find((h: any) => h.selected);
       scriptBody = selectedHook
         ? `${selectedHook.hookText}\n\n${script.body}`
         : script.body;
